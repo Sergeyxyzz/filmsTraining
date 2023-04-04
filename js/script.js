@@ -24,6 +24,9 @@ const movieDB = {
     ]
 };
 
+
+
+
 const ad = document.querySelector('.promo__adv')
 const ads = ad.querySelectorAll('img')
 
@@ -43,19 +46,68 @@ promo__bg.style.cssText = `background: url('img/bg.jpg')`
 
 const promoInteractive = document.querySelector('.promo__interactive-list')
 
-const div = document.createElement('div')
-
+let div = document.createElement('div')
 let str = ''
 
-movieDB.movies.forEach((elem, i) => {
-    str += `<li class="promo__interactive-item">${++i} ${elem}
-    <div class="delete"></div></li>`
-})
+const createList = () => {
+    movieDB.movies.forEach((elem, i) => {
+        str += `<li class="promo__interactive-item">${++i} ${elem.length > 15 ? elem.slice(0, 15) + '...' : elem}
+        <div class="delete"></div></li>`
+    })
+    
+    div.innerHTML = `
+        <ul class="promo__interactive-list">
+            ${str}
+        </ul>
+        `
+}
 
-div.innerHTML = `
-    <ul class="promo__interactive-list">
-        ${str}
-    </ul>
-    `
+createList()
 
 promoInteractive.replaceWith(div)
+
+const accept = document.querySelector('.add button')
+
+const inp = document.querySelector('.adding__input')
+
+var lovely = document.querySelector('input[type=checkbox]');   
+
+accept.addEventListener('click', (e) => {
+    e.preventDefault()
+    str = ''
+
+    movieDB.movies.push(inp.value)
+    movieDB.movies.sort()
+    console.log(movieDB.movies)
+
+    if (inp.value.trim() === '') {
+        movieDB.movies.shift()
+        accept.removeEventListener('click')
+    }
+
+    if (lovely.checked) {
+        console.log(`${inp.value} - вы добавили любиый фильм`)
+    } 
+    
+    movieDB.movies.forEach((elem, i) => {
+        str += `<li class="promo__interactive-item">${++i} ${elem.length > 15 ? elem.slice(0, 15) + '...' : elem}
+        <div class="delete"></div></li>`
+    })
+    
+    div.innerHTML = `
+        <ul class="promo__interactive-list">
+            ${str}
+        </ul>
+    `
+
+    inp.value = ''
+})
+
+
+document.querySelectorAll('.delete').forEach((btn, i) => { // удалить элемент можно легко через родителя
+    btn.addEventListener('click', () => {
+        btn.parentElement.remove()
+        movieDB.movies.splice(i, 1)
+    })
+})
+
